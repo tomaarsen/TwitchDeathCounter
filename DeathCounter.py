@@ -164,7 +164,7 @@ class DeathCounter:
             message = f"Death Counter{' is now' if changed else ''}: {num2words(count, lang='ja', to='cardinal')} ({count})"
         else:
             message = f"Death Counter{' is now' if changed else ''}: {count}"
-        logging.info(message)
+        logging.info(f"Death Counter{' is now' if changed else ''}: {count}")
         self.ws.send_message(message)
 
 if __name__ == "__main__":
