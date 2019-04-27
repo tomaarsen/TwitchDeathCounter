@@ -24,6 +24,9 @@ There is a japanese mode, and a normal mode. The former was designed for the gam
 If Japanese mode is false, the result will look like:
 <pre><b>Death Counter: 26</b></pre>
 
+You can also set a prefix, which allows you to change the Death Counter into a streamer or boss specific counter:
+<pre><b>Nameless King Death Counter: 26</b></pre>
+
 ---
 
 # Requirements
@@ -45,6 +48,7 @@ This bot is controlled by a settings.txt file, which looks like:
     "Channel": "#<channel>",
     "Nickname": "<name>",
     "Authentication": "oauth:<auth>",
+    "Prefix": "",
     "Japanese": false
 }
 ```
@@ -56,6 +60,7 @@ This bot is controlled by a settings.txt file, which looks like:
 | Channel              | The Channel that will be connected to.                            | "#CubieDev" |
 | Nickname             | The Username of the bot account.                                  | "CubieB0T" |
 | Authentication       | The OAuth token for the bot account.                              | "oauth:pivogip8ybletucqdz4pkhag6itbax" |
+| Prefix | What should be in front of "Death Counter" in the output. Eg a boss or a streamer. | "Nameless King" |
 | Japanese         | If the Japanese output mode should be used. (See Usage) | false |
 
 *Note that the example OAuth token is not an actual token, but merely a generated string to give an indication what it might look like.*
