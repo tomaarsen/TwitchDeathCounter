@@ -4,5 +4,6 @@
     "Channel": "#<channel>",
     "Nickname": "<name>",
     "Authentication": "oauth:<auth>",
+    "Prefix": "",
     "Japanese": false
 }

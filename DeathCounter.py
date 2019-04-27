@@ -64,6 +64,7 @@ class Settings:
                                 data['Channel'],
                                 data['Nickname'],
                                 data['Authentication'],
+                                data["Prefix"],
                                 data['Japanese'])
                 logging.debug("Settings loaded into Bot.")
         except ValueError:
@@ -80,6 +81,7 @@ class Settings:
                                     "Channel": "#<channel>",
                                     "Nickname": "<name>",
                                     "Authentication": "oauth:<auth>",
+                                    "Prefix": "",
                                     "Japanese": False
                                 }
                 f.write(json.dumps(standard_dict, indent=4, separators=(',', ': ')))
@@ -92,6 +94,7 @@ class DeathCounter:
         self.chan = None
         self.nick = None
         self.auth = None
+        self.prefix = None
         self.japanese = None
         self.prev_increment = 0
         
@@ -106,12 +109,13 @@ class DeathCounter:
         self.ws.join_channel(self.chan)
         self.ws.add_capability(["tags"])
 
-    def set_settings(self, host, port, chan, nick, auth, japanese):
+    def set_settings(self, host, port, chan, nick, auth, prefix, japanese):
         self.host = host
         self.port = port
         self.chan = chan
         self.nick = nick
         self.auth = auth
+        self.prefix = prefix
         self.japanese = japanese
 
     def message_handler(self, m):
@@ -161,10 +165,10 @@ class DeathCounter:
     def send_death_counter(self, changed):
         count = self.db.get_deaths()
         if self.japanese:
-            message = f"Death Counter{' is now' if changed else ''}: {num2words(count, lang='ja', to='cardinal')} ({count})"
+            message = f"{self.prefix} Death Counter{' is now' if changed else ''}: {num2words(count, lang='ja', to='cardinal')} ({count})"
         else:
-            message = f"Death Counter{' is now' if changed else ''}: {count}"
-        logging.info(f"Death Counter{' is now' if changed else ''}: {count}")
+            message = f"{self.prefix} Death Counter{' is now' if changed else ''}: {count}"
+        logging.info(f"{self.prefix} Death Counter{' is now' if changed else ''}: {count}")
         self.ws.send_message(message)
 
 if __name__ == "__main__":
