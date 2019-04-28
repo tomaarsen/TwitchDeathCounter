@@ -112,6 +112,7 @@ class DeathCounter:
                                   callback=self.message_handler,
                                   capability="tags",
                                   live=True)
+        self.ws.start_bot()
 
     def set_settings(self, host, port, chan, nick, auth, prefix, japanese):
         self.host = host
