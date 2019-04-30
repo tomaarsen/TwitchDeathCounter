@@ -1,91 +1,12 @@
 from TwitchWebsocket import TwitchWebsocket
 from num2words import num2words
-import json, sqlite3, time, logging, os
+import logging, time
 
-class Logging:
-    def __init__(self):
-        # Either of the two will be empty depending on OS
-        prefix = "/".join(os.path.dirname(os.path.realpath(__file__)).split("/")[:-1]) + "\\".join(os.path.dirname(os.path.realpath(__file__)).split("\\")[:-1]) 
-        prefix += "/Logging/"
-        try:
-            os.mkdir(prefix)
-        except FileExistsError:
-            pass
-        log_file = prefix + os.path.basename(__file__).split('.')[0] + ".txt"
-        logging.basicConfig(
-            filename=log_file,
-            level=logging.DEBUG,
-            format="%(asctime)s | %(levelname)s | %(message)s",
-            datefmt="%Y-%m-%d %H:%M:%S"
-        )
-        # Spacer
-        logging.info("")
+from Log import Log
+Log(__file__)
 
-class Database:
-    def __init__(self, database_dir, streamer):
-        self.database_dir = database_dir
-        # Remove the # which may be present in the name
-        self.streamer = streamer.lower().replace("#", "")
-        # Add the streamer with 0 deaths initially, unless it already exists.
-        logging.debug("Creating Database...")
-        self.execute('CREATE TABLE IF NOT EXISTS DeathCounter (streamer varchar(30), counter INTEGER, PRIMARY KEY (streamer));')
-        logging.debug("Database created.")
-        self.execute('INSERT OR IGNORE INTO DeathCounter(streamer, counter) VALUES (?, 0)', (self.streamer,))
-    
-    def execute(self, command, data="", fetch=False):
-        ''' Execute Commands in SQLite '''
-        with sqlite3.connect(self.database_dir) as connection:
-            cursor = connection.cursor()
-            cursor.execute(command, data)
-            if fetch:
-                return cursor.fetchall()
-            connection.commit()
-
-    def set_death_counter(self, death_counter):
-        self.execute("UPDATE DeathCounter SET counter=? WHERE streamer=?", (death_counter, self.streamer))
-
-    def get_deaths(self):
-        return self.execute("SELECT counter FROM DeathCounter WHERE streamer=?", (self.streamer,), fetch=True)[0][0]
-    
-    def increment(self):
-        self.execute("UPDATE DeathCounter SET counter=counter+1 WHERE streamer=?", (self.streamer,))
-
-class Settings:
-    def __init__(self, bot):
-        logging.debug("Loading settings.txt file...")
-        try:
-            # Try to load the file using json.
-            # And pass the data to the GoogleTranslate class instance if this succeeds.
-            with open("settings.txt", "r") as f:
-                settings = f.read()
-                data = json.loads(settings)
-                bot.set_settings(data['Host'],
-                                data['Port'],
-                                data['Channel'],
-                                data['Nickname'],
-                                data['Authentication'],
-                                data["Prefix"],
-                                data['Japanese'])
-                logging.debug("Settings loaded into Bot.")
-        except ValueError:
-            logging.error("Error in settings file.")
-            raise ValueError("Error in settings file.")
-        except FileNotFoundError:
-            # If the file is missing, create a standardised settings.txt file
-            # With all parameters required.
-            logging.error("Please fix your settings.txt file that was just generated.")
-            with open('settings.txt', 'w') as f:
-                standard_dict = {
-                                    "Host": "irc.chat.twitch.tv",
-                                    "Port": 6667,
-                                    "Channel": "#<channel>",
-                                    "Nickname": "<name>",
-                                    "Authentication": "oauth:<auth>",
-                                    "Prefix": "",
-                                    "Japanese": False
-                                }
-                f.write(json.dumps(standard_dict, indent=4, separators=(',', ': ')))
-            raise ValueError("Please fix your settings.txt file that was just generated.")
+from Settings import Settings
+from Database import Database
 
 class DeathCounter:
     def __init__(self):
@@ -177,5 +98,4 @@ class DeathCounter:
         self.ws.send_message(message)
 
 if __name__ == "__main__":
-    Logging()
     DeathCounter()
