@@ -1,0 +1,2 @@
+git+git://github.com/CubieDev/TwitchWebsocket@master#egg=TwitchWebsocket
+num2words==0.5.10
