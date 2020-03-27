@@ -12,15 +12,22 @@ class Settings:
             with open("settings.txt", "r") as f:
                 settings = f.read()
                 data = json.loads(settings)
-                data = json.loads(settings)
+                # Rename Prefix to BossName
+                if "Prefix" in data:
+                    data["BossName"] = data["Prefix"]
                 bot.set_settings(data['Host'],
                                 data['Port'],
                                 data['Channel'],
                                 data['Nickname'],
                                 data['Authentication'],
-                                data["Prefix"],
+                                data["BossName"],
                                 data['Japanese'])
                 logger.debug("Settings loaded into Bot.")
+            # Update the settings file to rename "Prefix" to "BossName"
+            if "Prefix" in data:
+                del data["Prefix"]
+                with open('settings.txt', 'w') as f:
+                    f.write(json.dumps(data, indent=4, separators=(',', ': ')))
         except ValueError:
             logger.error("Error in settings file.")
             raise ValueError("Error in settings file.")
@@ -35,7 +42,7 @@ class Settings:
                                     "Channel": "#<channel>",
                                     "Nickname": "<name>",
                                     "Authentication": "oauth:<auth>",
-                                    "Prefix": "",
+                                    "BossName": "",
                                     "Japanese": False
                                 }
                 f.write(json.dumps(standard_dict, indent=4, separators=(',', ': ')))
