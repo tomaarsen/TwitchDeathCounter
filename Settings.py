@@ -22,15 +22,15 @@ class Settings:
                                 data['Authentication'],
                                 data["BossName"],
                                 data['Japanese'])
+                # Update the settings file to rename "Prefix" to "BossName"
+                if "Prefix" in data:
+                    Settings.write(bot)
                 logger.debug("Settings loaded into Bot.")
-            # Update the settings file to rename "Prefix" to "BossName"
-            if "Prefix" in data:
-                del data["Prefix"]
-                with open('settings.txt', 'w') as f:
-                    f.write(json.dumps(data, indent=4, separators=(',', ': ')))
+        
         except ValueError:
             logger.error("Error in settings file.")
             raise ValueError("Error in settings file.")
+        
         except FileNotFoundError:
             # If the file is missing, create a standardised settings.txt file
             # With all parameters required.
@@ -47,3 +47,18 @@ class Settings:
                                 }
                 f.write(json.dumps(standard_dict, indent=4, separators=(',', ': ')))
                 raise ValueError("Please fix your settings.txt file that was just generated.")
+
+    @staticmethod
+    def write(bot):
+        with open('settings.txt', 'w') as f:
+            data = {
+                "Host": bot.host,
+                "Port": bot.port,
+                "Channel": bot.chan,
+                "Nickname": bot.nick,
+                "Authentication": bot.auth,
+                "BossName": bot.boss_name,
+                "Japanese": bot.japanese
+            }
+            f.write(json.dumps(data, indent=4, separators=(',', ': ')))
+

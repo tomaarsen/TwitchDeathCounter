@@ -86,6 +86,8 @@ class DeathCounter:
                         self.db.set_death_counter(0)
                         # Send the new death counter with "Is now"
                         self.send_death_counter(changed=True)
+                        # Write the new name to the settings file as well
+                        Settings.write(self)
                         logging.info(f"Switched fight to \"{self.boss_name}\".")
                     else:
                         self.ws.send_message("Expected format is `!setfight boss name` where `boss name` is the name of the boss.")
